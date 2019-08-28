@@ -89,7 +89,8 @@ HelpPath = 'config/help.bin'
 
 #天獄
 tengokuurl = "https://hiroba.dqx.jp/sc/game/tengoku"
-tengokufileReading = False
+with open("flag.bin","wb") as f:
+    pickle.dump(False,f)
 
 #Botのコマンドの指定（うまく起動できていない）
 bot = commands.Bot(command_prefix='!')
@@ -134,21 +135,31 @@ async def loop():
             await channel.send(text + message.Text + "\n")
         return
 
-@tasks.loop(seconds=1)
+#天獄チェック処理
+@tasks.loop(seconds=7)
 async def tengokuloop():
-    nowmin = datetime.now().minute
+    now = datetime.now()
     channel = client.get_channel(607853240272551959)
-    if nowmin >= 0:
-        tengokufileReading = True
-        with open("tengoku.bin","rb") as f:
-            text = pickle.load(f)
-            print(text)
-        if text.find("現在開放されていません") >= 0:
+    with open("flag.bin","rb") as f:
+        flag = pickle.load(f)
+    if now.minute >= 0 and flag == False:
+        soup = BeautifulSoup(requests.get(tengokuurl).content,"html.parser")
+        #file = open("test.html","r")
+        #html = file.read()
+        #file.close()
+        #soup = BeautifulSoup(html,"html.parser")
+
+        div = soup.find("div", class_="tengoku__period")
+        tengokutext = div.text
+        if tengokutext.find("現在開放されていません") >= 0:
             return
         else:
-            await channel.send(text)
-    else:
-        tengokufileReading = False
+            await channel.send(tengokutext)
+            flag = now
+
+    if (datetime.now() - flag).day >= 3:
+        with open("flag.bin","wb") as f:
+            pickle.dump(False,f)
 
 
 #メッセージが来た時のイベント
