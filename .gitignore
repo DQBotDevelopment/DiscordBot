@@ -388,4 +388,4 @@ __pycache__/
 NotUpload/
 DoNotUpload/
 not/
-DQBot/config/Config.ini
+DQBot/config/*.ini
