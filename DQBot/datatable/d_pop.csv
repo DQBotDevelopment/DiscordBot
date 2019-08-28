@@ -1,0 +1,5 @@
+beast,datatable\beastenemy.csv,datatable\beastitem.csv
+mecha,datatable\mechaenemy.csv,datatable\mechaitem.csv
+element,datatable\elementenemy.csv,datatable\elementitem.csv
+zombie,datatable\zombieenemy.csv,datatable\zombieitem.csv
+spider,datatable\spiderenemy.csv,datatable\spideritem.csv
