@@ -4,6 +4,10 @@ from discord.ext import tasks
 from datetime import datetime, timedelta
 import csv
 
+from bs4 import BeautifulSoup
+import requests
+import pickle
+
 #自分用の時間class
 class MyDataTime:
     Month = 1
@@ -83,6 +87,10 @@ BossLevelPath = 'datatable/BossLevel.csv'
 D_PopPath = 'datatable/d_pop.csv'
 HelpPath = 'config/help.bin'
 
+#天獄
+tengokuurl = "https://hiroba.dqx.jp/sc/game/tengoku"
+tengokufileReading = False
+
 #Botのコマンドの指定（うまく起動できていない）
 bot = commands.Bot(command_prefix='!')
 
@@ -102,6 +110,15 @@ def OpenD_Pop():
 def OpenD_PopTable(path):
     with open(path,'r') as fp:
         return list(csv.reader(fp))
+
+#天獄が開いているかをチェックする
+def Check_tengoku():
+    tengokutext = BeautifulSoup(requests.get(tengokuurl).content,"html.parser").find("div",class_="tengoku__period").text
+    if tengokutext.find("現在開放されていません") >= 0:
+        return False
+    else:
+        return tengokutext
+
 #クライアント情報
 client = discord.Client()
 
@@ -116,6 +133,23 @@ async def loop():
             channel = client.get_channel(message.ChannelID)
             await channel.send(text + message.Text + "\n")
         return
+
+@tasks.loop(seconds=1)
+async def tengokuloop():
+    nowmin = datetime.now().minute
+    channel = client.get_channel(607853240272551959)
+    if nowmin >= 0:
+        tengokufileReading = True
+        with open("tengoku.bin","rb") as f:
+            text = pickle.load(f)
+            print(text)
+        if text.find("現在開放されていません") >= 0:
+            return
+        else:
+            await channel.send(text)
+    else:
+        tengokufileReading = False
+
 
 #メッセージが来た時のイベント
 @client.event
@@ -187,6 +221,9 @@ async def on_message(message):
            await message.channel.send(f.read())
         return
 
+    if message.content == '/tengoku':
+        await message.channel.send(Check_tengoku())
+
 #コマンド動作のbot（うまく動いていない）
 @bot.command()
 async def defence():
@@ -206,6 +243,7 @@ async def defence():
 @client.event
 async def on_connect():
     loop.start()
+    tengokuloop.start()
 
 #ループのスタート
 #loop.start()
