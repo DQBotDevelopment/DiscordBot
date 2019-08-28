@@ -70,7 +70,7 @@ class NoticeSystem:
 MyNoticeSystem = NoticeSystem()
 
 #コンフィグファイルのパス
-FilePath = "config\Config.ini"
+FilePath = "config\\Config.ini"
 
 with open(FilePath) as f:
     ConfigLine = f.readlines()
@@ -78,10 +78,10 @@ with open(FilePath) as f:
 #トークン
 TOKEN = ConfigLine[0].strip("\n")
 
-DefencePath = 'datatable\Defence.csv'
-BossLevelPath = 'datatable\BossLevel.csv'
-D_PopPath = 'datatable\d_pop.csv'
-HelpPath = 'config\help.bin'
+DefencePath = 'datatable\\Defence.csv'
+BossLevelPath = 'datatable\\BossLevel.csv'
+D_PopPath = 'datatable\\d_pop.csv'
+HelpPath = 'config\\help.bin'
 
 #Botのコマンドの指定（うまく起動できていない）
 bot = commands.Bot(command_prefix='!')
