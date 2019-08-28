@@ -388,3 +388,4 @@ __pycache__/
 NotUpload/
 DoNotUpload/
 not/
+config/Config.ini
