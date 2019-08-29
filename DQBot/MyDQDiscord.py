@@ -2,8 +2,11 @@ import discord
 from discord.ext import commands
 from discord.ext import tasks
 from datetime import datetime, timedelta
+from NoticeSystem import NoticeSystem
+from NoticeSystem import NoticeMessage
 import csv
 
+<<<<<<< HEAD
 from bs4 import BeautifulSoup
 import requests
 import pickle
@@ -70,13 +73,15 @@ class NoticeSystem:
             self.NoticeList.pop(Index)
         return ReturnList
 
+=======
+>>>>>>> master
 #通知システム
 MyNoticeSystem = NoticeSystem()
 
 #コンフィグファイルのパス
 FilePath = "config/Config.ini"
 
-with open(FilePath) as f:
+with open(FilePath,encoding="utf-8") as f:
     ConfigLine = f.readlines()
 
 #トークン
@@ -97,19 +102,19 @@ bot = commands.Bot(command_prefix='!')
 
 #防衛軍スケジュールを開く
 def OpenDefence():
-    with open(DefencePath,'r') as fp:
+    with open(DefencePath,'r',encoding="utf-8") as fp:
         return list(csv.reader(fp))
 
 #エンドボスのレベルテーブルを開く
 def OpenBossLevel():
-    with open(BossLevelPath,'r') as fp:
+    with open(BossLevelPath,'r',encoding="utf-8") as fp:
         return list(csv.reader(fp))
 #防衛軍タイムスケジュールを開く
 def OpenD_Pop():
-    with open(D_PopPath,'r') as fp:
+    with open(D_PopPath,'r',encoding="utf-8") as fp:
         return list(csv.reader(fp))
 def OpenD_PopTable(path):
-    with open(path,'r') as fp:
+    with open(path,'r',encoding="utf-8") as fp:
         return list(csv.reader(fp))
 
 #天獄が開いているかをチェックする
@@ -127,6 +132,7 @@ client = discord.Client()
 @tasks.loop(seconds=1)
 async def loop():
     now = datetime.now().strftime('%m:%d:%H:%M:%S')
+    print(now)
     NoticeMessageTextList = MyNoticeSystem.GetNowTimeText()
     if len(NoticeMessageTextList) > 0:
         text = "予約通知\n" + now + "\n"
@@ -224,7 +230,7 @@ async def on_message(message):
         return
     #ヘルプを表示する
     if message.content == "/help":
-        with open(HelpPath) as f:
+        with open(HelpPath,encoding="utf-8") as f:
            await message.channel.send(f.read())
         return
 
