@@ -139,15 +139,11 @@ async def loop():
 @tasks.loop(seconds=7)
 async def tengokuloop():
     now = datetime.now()
-    channel = client.get_channel(607853240272551959)
+    channel = client.get_channel(607614417999233034)
     with open("flag.bin","rb") as f:
         flag = pickle.load(f)
     if now.minute >= 0 and flag == False:
         soup = BeautifulSoup(requests.get(tengokuurl).content,"html.parser")
-        #file = open("test.html","r")
-        #html = file.read()
-        #file.close()
-        #soup = BeautifulSoup(html,"html.parser")
 
         div = soup.find("div", class_="tengoku__period")
         tengokutext = div.text
@@ -231,9 +227,6 @@ async def on_message(message):
         with open(HelpPath) as f:
            await message.channel.send(f.read())
         return
-
-    if message.content == '/tengoku':
-        await message.channel.send(Check_tengoku())
 
 #コマンド動作のbot（うまく動いていない）
 @bot.command()
