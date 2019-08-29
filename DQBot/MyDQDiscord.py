@@ -91,7 +91,7 @@ async def tengokuloop():
         if tengokutext.find("現在開放されていません") >= 0:
             return
         else:
-            await channel.send(tengokutext)
+            await channel.send("天獄情報\n" + tengokutext)
             flag = now
 
     if (datetime.now() - flag).day >= 3:
