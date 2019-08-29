@@ -20,6 +20,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="MyDQDiscord.py" />
+    <Compile Include="NoticeSystem.py">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <InterpreterReference Include="CondaEnv|CondaEnv|private" />
