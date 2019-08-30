@@ -197,7 +197,7 @@ async def defence():
 @client.event
 async def on_connect():
     loop.start()
-    tengoku.Set_ch(client.get_channel(607853240272551959))
+    tengoku.Set_ch(client.get_channel(607614417999233034))
     tengoku.Update.start()
 
 #ループのスタート
