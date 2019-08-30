@@ -10,8 +10,40 @@ from bs4 import BeautifulSoup
 import requests
 import pickle
 
+class TengokuNotice(commands.Cog):
+    #URL = "https://hiroba.dqx.jp/sc/game/tengoku"
+    URL = "http://35.203.168.127/test.html"
+
+    def __init__(self):
+        self.channel = 0
+        self.open = False
+        self.delta = 0
+
+    def Set_ch(self,ch : discord.channel):
+        self.channel = ch
+
+    @tasks.loop(seconds=5)
+    async def Update(self):
+        now = datetime.now()
+        if now.minute >= 0 and self.open == False:
+            soup = BeautifulSoup(requests.get(TengokuNotice.URL).content,"html.parser")
+            div = soup.find("div", class_="tengoku__period")
+            tengokutext = div.text
+
+            if tengokutext.find("現在開放されていません") >= 0:
+                return
+            else:
+                self.delta = now
+                self.open = True
+                await self.channel.send("天獄情報" + tengokutext)
+        elif self.open and (now - self.delta).day >= 3:
+            self.open = False
+
 #通知システム
 MyNoticeSystem = NoticeSystem()
+
+#天獄通知システム
+tengoku = TengokuNotice()
 
 #コンフィグファイルのパス
 FilePath = "config/Config.ini"
@@ -63,11 +95,11 @@ def Check_tengoku():
 #クライアント情報
 client = discord.Client()
 
+
 #loop処理
 @tasks.loop(seconds=1)
 async def loop():
     now = datetime.now().strftime('%m:%d:%H:%M:%S')
-    print(now)
     NoticeMessageTextList = MyNoticeSystem.GetNowTimeText()
     if len(NoticeMessageTextList) > 0:
         text = "予約通知\n" + now + "\n"
@@ -75,29 +107,6 @@ async def loop():
             channel = client.get_channel(message.ChannelID)
             await channel.send(text + message.Text + "\n")
         return
-
-#天獄チェック処理
-@tasks.loop(seconds=7)
-async def tengokuloop():
-    now = datetime.now()
-    channel = client.get_channel(607614417999233034)
-    with open("flag.bin","rb") as f:
-        flag = pickle.load(f)
-    if now.minute >= 0 and flag == False:
-        soup = BeautifulSoup(requests.get(tengokuurl).content,"html.parser")
-
-        div = soup.find("div", class_="tengoku__period")
-        tengokutext = div.text
-        if tengokutext.find("現在開放されていません") >= 0:
-            return
-        else:
-            await channel.send("天獄情報\n" + tengokutext)
-            flag = now
-
-    if (datetime.now() - flag).day >= 3:
-        with open("flag.bin","wb") as f:
-            pickle.dump(False,f)
-
 
 #メッセージが来た時のイベント
 @client.event
@@ -188,7 +197,8 @@ async def defence():
 @client.event
 async def on_connect():
     loop.start()
-    tengokuloop.start()
+    tengoku.Set_ch(client.get_channel(607853240272551959))
+    tengoku.Update.start()
 
 #ループのスタート
 #loop.start()
