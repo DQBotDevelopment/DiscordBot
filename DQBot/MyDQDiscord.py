@@ -21,10 +21,10 @@ class TengokuNotice(commands.Cog):
     def Set_ch(self,ch : discord.channel):
         self.channel = ch
 
-    @tasks.loop(seconds=5)
+    @tasks.loop(seconds=20)
     async def Update(self):
         now = datetime.now()
-        if now.minute >= 0 and self.open == False:
+        if now.minute == 0 and self.open == False:
             soup = BeautifulSoup(requests.get(TengokuNotice.URL).content,"html.parser")
             div = soup.find("div", class_="tengoku__period")
             tengokutext = div.text
