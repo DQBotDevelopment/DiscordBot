@@ -11,8 +11,7 @@ import requests
 import pickle
 
 class TengokuNotice(commands.Cog):
-    #URL = "https://hiroba.dqx.jp/sc/game/tengoku"
-    URL = "http://35.203.168.127/test.html"
+    URL = "https://hiroba.dqx.jp/sc/game/tengoku"
 
     def __init__(self):
         self.channel = 0
@@ -59,11 +58,6 @@ BossLevelPath = 'datatable/BossLevel.csv'
 D_PopPath = 'datatable/d_pop.csv'
 HelpPath = 'config/help.bin'
 
-#天獄
-tengokuurl = "https://hiroba.dqx.jp/sc/game/tengoku"
-with open("flag.bin","wb") as f:
-    pickle.dump(False,f)
-
 #Botのコマンドの指定（うまく起動できていない）
 bot = commands.Bot(command_prefix='!')
 
@@ -83,14 +77,6 @@ def OpenD_Pop():
 def OpenD_PopTable(path):
     with open(path,'r',encoding="utf-8") as fp:
         return list(csv.reader(fp))
-
-#天獄が開いているかをチェックする
-def Check_tengoku():
-    tengokutext = BeautifulSoup(requests.get(tengokuurl).content,"html.parser").find("div",class_="tengoku__period").text
-    if tengokutext.find("現在開放されていません") >= 0:
-        return False
-    else:
-        return tengokutext
 
 #クライアント情報
 client = discord.Client()
