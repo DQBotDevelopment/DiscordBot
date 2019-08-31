@@ -179,15 +179,18 @@ async def defence():
             text += str(i) + "時:" + line[i] + "\n"
         await channel.send(text)
 
+<<<<<<< HEAD
 #接続完了イベント
 @client.event
 async def on_connect():
     loop.start()
     tengoku.Set_ch(client.get_channel(607614417999233034))
     tengoku.Update.start()
+=======
+>>>>>>> a613defb661874932ff9c1dce99814ef7f0aeb95
 
-#ループのスタート
-#loop.start()
+#
+loop.start()
 #クライアントを走らせる
 client.run(TOKEN)
 
