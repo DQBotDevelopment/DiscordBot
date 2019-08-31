@@ -6,8 +6,43 @@ from NoticeSystem import NoticeSystem
 from NoticeSystem import NoticeMessage
 import csv
 
+from bs4 import BeautifulSoup
+import requests
+import pickle
+
+class TengokuNotice(commands.Cog):
+    URL = "https://hiroba.dqx.jp/sc/game/tengoku"
+
+    def __init__(self):
+        self.channel = 0
+        self.open = False
+        self.delta = 0
+
+    def Set_ch(self,ch : discord.channel):
+        self.channel = ch
+
+    @tasks.loop(seconds=20)
+    async def Update(self):
+        now = datetime.now()
+        if now.minute == 0 and self.open == False:
+            soup = BeautifulSoup(requests.get(TengokuNotice.URL).content,"html.parser")
+            div = soup.find("div", class_="tengoku__period")
+            tengokutext = div.text
+
+            if tengokutext.find("現在開放されていません") >= 0:
+                return
+            else:
+                self.delta = now
+                self.open = True
+                await self.channel.send("天獄情報" + tengokutext)
+        elif self.open and (now - self.delta).day >= 3:
+            self.open = False
+
 #通知システム
 MyNoticeSystem = NoticeSystem()
+
+#天獄通知システム
+tengoku = TengokuNotice()
 
 #コンフィグファイルのパス
 FilePath = "config/Config.ini"
@@ -42,14 +77,15 @@ def OpenD_Pop():
 def OpenD_PopTable(path):
     with open(path,'r',encoding="utf-8") as fp:
         return list(csv.reader(fp))
+
 #クライアント情報
 client = discord.Client()
+
 
 #loop処理
 @tasks.loop(seconds=1)
 async def loop():
     now = datetime.now().strftime('%m:%d:%H:%M:%S')
-    print(now)
     NoticeMessageTextList = MyNoticeSystem.GetNowTimeText()
     if len(NoticeMessageTextList) > 0:
         text = "予約通知\n" + now + "\n"
@@ -147,6 +183,8 @@ async def defence():
 @client.event
 async def on_connect():
     loop.start()
+    tengoku.Set_ch(client.get_channel(607614417999233034))
+    tengoku.Update.start()
 
 #ループのスタート
 #loop.start()
