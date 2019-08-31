@@ -143,13 +143,9 @@ async def defence():
             text += str(i) + "時:" + line[i] + "\n"
         await channel.send(text)
 
-#接続完了イベント
-@client.event
-async def on_connect():
-    loop.start()
 
-#ループのスタート
-#loop.start()
+#
+loop.start()
 #クライアントを走らせる
 client.run(TOKEN)
 

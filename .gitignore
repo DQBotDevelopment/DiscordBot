@@ -389,3 +389,4 @@ NotUpload/
 DoNotUpload/
 not/
 DQBot/config/*.ini
+*.pyproj
