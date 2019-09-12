@@ -35,7 +35,7 @@ class TengokuNotice(commands.Cog):
                 self.delta = now
                 self.open = True
                 await self.channel.send("天獄情報" + tengokutext)
-        elif self.open and (now - self.delta).day >= 3:
+        elif self.open and (now - self.delta).days >= 3:
             self.open = False
 
 #通知システム
@@ -183,7 +183,7 @@ async def defence():
 @client.event
 async def on_connect():
     loop.start()
-    tengoku.Set_ch(client.get_channel(607614417999233034))
+    tengoku.Set_ch(client.get_channel(607853240272551959))
     tengoku.Update.start()
 
 #クライアントを走らせる
